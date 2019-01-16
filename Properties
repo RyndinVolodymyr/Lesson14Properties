@@ -1,0 +1,143 @@
+
+
+// MARK 14: добавить свойства:
+// - дата рождения (используя другую структуру)
+
+struct DOB {
+    
+    var day: Int
+    var month: Int
+    var year: Int
+}
+
+struct Student {
+    
+    var name: String {
+        
+        willSet {
+            print("Name wil be change to - \(newValue), old value is - \(name)")
+        }
+        didSet {
+            print("Name already change to - \(name), old value is - \(oldValue)")
+        }
+    }
+    
+    var fatherName: String {
+        
+        willSet {
+            print("fathername will be change to - \(newValue), old value is - \(fatherName)")
+        }
+        didSet {
+            print("fathername already change to - \(fatherName), old value is - \(oldValue)")
+        }
+    }
+    
+    var fullName: String {
+        
+        get {
+        return name.capitalized + " " + fatherName.capitalized
+        }
+        
+        set {
+            var full = newValue.components(separatedBy: " ")
+            if full.count > 0 {
+                name = full[0]
+                if full.count > 1 {
+                    fatherName = full[1]
+                }
+            }
+        }
+    }
+  // MARK 14: - возраст (вычисляется на основании даты рождения)
+    var dayOfBirthday: DOB
+    
+    var age: Int {
+        
+        let dayToday: DOB
+        dayToday = DOB(day: 09, month: 01, year: 2019)
+        
+        if dayOfBirthday.month <= dayToday.month {
+            if dayOfBirthday.day <= dayToday.day {
+                return dayToday.year - dayOfBirthday.year
+            }
+        }
+        
+        return (dayToday.year - 1) - dayOfBirthday.year
+    }
+    
+    // MARK 14: // - количество лет учебы (начиная с 6 лет, либо 0 если возраст меньше чем 6)
+    
+    var studyAge: Int {
+        
+        if age <= 6 {
+            return 0
+            
+        } else if age > 22 {
+            return 15
+        }
+        return age - 6
+    }
+}
+
+var stud = Student(name: "First", fatherName: "Firstovich", dayOfBirthday: DOB(day: 03, month: 06, year: 1987))
+stud.name = "One"
+stud.fullName = "viktor Kisel"
+print(stud.fullName)
+stud.age
+stud.studyAge
+
+ // MARK: 14
+/*
+ 3. Создать структуру "отрезок", у которой два свойства - точка "А" и точка "В", которые в свою очередь тоже структуры (не стандартные, а наши собственные)
+ Также отрезок имеет вычисляемые свойства (они изменяют точки "А" и "В", если мы изменяем следующие свойства):
+ -midPoint - середина отрезка (при её изменении, отрезок смещается на параллельную прямую, проходящую через наш midPoint?)
+ -длина отрезка (при изменении, точка "А" остается, а точка "В" движется)
+ */
+
+struct Point {
+    
+    var x: Double, y: Double
+}
+
+struct Line {
+    
+    var a: Point, b: Point
+    
+    var middPoint: Point {
+        
+        get {
+            let middleX = (a.x + b.x) / 2
+            let middleY = (a.y + b.y) / 2
+            return Point(x: middleX, y: middleY)
+        }
+        set {
+            let newX = middPoint.x - newValue.x
+            let newY = middPoint.y - newValue.y
+            
+            a.x -= newX
+            a.y -= newY
+            b.x -= newX
+            b.y -= newY
+        }
+    }
+    
+    var lenght: Double {
+        
+        get {
+        return sqrt(pow((b.x - a.x), 2) + pow((b.y - a.y), 2))
+            
+        }
+        set {
+            b.x = a.x + newValue * (b.x - a.x) / lenght
+            b.y = a.y + newValue * (b.y - a.y) / lenght
+        }
+    }
+}
+
+var line = Line(a: Point(x: 9, y: 3), b: Point(x: 2, y: 7))
+
+line.middPoint = Point(x: 4, y: 6)
+line.lenght = 10
+print("Point A.x = \(line.a.x) Point A.y = \(line.a.y) Point B.x = \(line.b.x) Point B.y \(line.b.y)")
+print("Middle point \(line.middPoint)")
+print("lenght of line \(line.lenght)")
